@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog · Pratyush Ranjan Mishra</title>
+  <meta name="description" content="Writing by Pratyush Ranjan Mishra." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👨‍💻</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <a class="brand" href="index.html">Pratyush</a>
+      <div class="menu">
+        <a href="index.html">Home</a>
+        <a href="projects.html">Projects</a>
+        <a href="blog.html" class="active">Blog</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="page-head">
+      <h1>Blog</h1>
+      <p>Notes on building integration tooling and financial-message systems.</p>
+    </div>
+
+    <ul class="post-list">
+      <li>
+        <span class="date">July 11, 2026</span>
+        <a href="posts/hello-world.html">Hello, world — starting this blog</a>
+        <p class="excerpt">Why I'm setting up a personal site and what I plan to write about.</p>
+      </li>
+      <!-- TODO: add newest posts at the TOP. Copy an <li> block and create the matching file in posts/. -->
+    </ul>
+  </div>
+
+  <footer>
+    © <span id="year"></span> Pratyush Ranjan Mishra · Built with GitHub Pages
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

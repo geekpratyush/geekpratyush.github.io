@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hello, world — starting this blog · Pratyush</title>
+  <meta name="description" content="Why I'm setting up a personal site." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👨‍💻</text></svg>" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <a class="brand" href="../index.html">Pratyush</a>
+      <div class="menu">
+        <a href="../index.html">Home</a>
+        <a href="../projects.html">Projects</a>
+        <a href="../blog.html" class="active">Blog</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <article class="post">
+      <h1>Hello, world — starting this blog</h1>
+      <p class="date">July 11, 2026</p>
+
+      <p>
+        I'm setting up this site as a home for my work and writing. I spend most of
+        my time building integration tooling — universal protocol workbenches like
+        <a href="https://github.com/geekpratyush/nexuslink">NexusLink</a> and
+        <a href="https://github.com/geekpratyush/conduit">Conduit</a> — and libraries
+        for financial message formats.
+      </p>
+
+      <h2>What I plan to write about</h2>
+      <p>
+        Enterprise Integration Patterns, working with SWIFT/ISO messages, Java and Go
+        desktop tooling, and whatever I learn along the way.
+        <!-- TODO: make this yours. -->
+      </p>
+
+      <h2>A quick code sample</h2>
+      <pre><code>public record Message(String type, byte[] payload) {}</code></pre>
+
+      <p><a href="../blog.html">← Back to all posts</a></p>
+    </article>
+  </div>
+
+  <footer>
+    © <span id="year"></span> Pratyush Ranjan Mishra · Built with GitHub Pages
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
