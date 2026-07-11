@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pratyush Ranjan Mishra</title>
+  <meta name="description" content="Personal site of Pratyush Ranjan Mishra — software engineer." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👨‍💻</text></svg>" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f6f8fa;
+      --text: #1f2328;
+      --muted: #656d76;
+      --accent: #0969da;
+      --border: #d0d7de;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --surface: #161b22;
+        --text: #e6edf3;
+        --muted: #9198a1;
+        --accent: #4493f8;
+        --border: #30363d;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+    header {
+      padding: 72px 0 48px;
+      text-align: center;
+    }
+    .avatar {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 3px solid var(--border);
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+    h1 { font-size: 2.2rem; margin: 0 0 6px; }
+    .tagline { color: var(--muted); font-size: 1.15rem; margin: 0 0 20px; }
+    .links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .links a {
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      transition: border-color .15s;
+    }
+    .links a:hover { border-color: var(--accent); }
+    section { padding: 32px 0; border-top: 1px solid var(--border); }
+    h2 { font-size: 1.4rem; margin: 0 0 16px; }
+    .skills { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+    .skills li {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .project {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+    .project h3 { margin: 0 0 6px; font-size: 1.1rem; }
+    .project h3 a { color: var(--accent); text-decoration: none; }
+    .project p { margin: 0; color: var(--muted); }
+    footer { text-align: center; padding: 40px 0; color: var(--muted); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img class="avatar" src="https://github.com/geekpratyush.png" alt="Pratyush Ranjan Mishra" />
+      <h1>Pratyush Ranjan Mishra</h1>
+      <p class="tagline">Software Engineer · Java &amp; Enterprise Integration</p>
+      <nav class="links">
+        <a href="https://github.com/geekpratyush">GitHub</a>
+        <a href="mailto:pratyush.ranjan.mishra@gmail.com">Email</a>
+        <!-- Add more: LinkedIn, Twitter/X, blog, etc. -->
+      </nav>
+    </header>
+
+    <section id="about">
+      <h2>About</h2>
+      <p>
+        Hi, I'm Pratyush — a software engineer who enjoys building reliable backend
+        systems and integration tooling. <!-- TODO: Rewrite this in your own words:
+        where you work, what you focus on, what you're excited about. -->
+      </p>
+    </section>
+
+    <section id="skills">
+      <h2>Skills</h2>
+      <ul class="skills">
+        <li>Java</li>
+        <li>Quarkus</li>
+        <li>Enterprise Integration Patterns</li>
+        <li>REST APIs</li>
+        <li>Gradle</li>
+        <!-- TODO: add/remove to match you -->
+      </ul>
+    </section>
+
+    <section id="projects">
+      <h2>Projects</h2>
+      <div class="project">
+        <h3><a href="https://github.com/geekpratyush?tab=repositories">Explore my repositories →</a></h3>
+        <p>A list of things I've been building. <!-- TODO: replace with featured projects --></p>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    © <span id="year"></span> Pratyush Ranjan Mishra · Built with GitHub Pages
+  </footer>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
