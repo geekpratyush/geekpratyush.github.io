@@ -255,6 +255,28 @@ section p { color: #cfcfe0; }
   box-shadow: 0 0 8px var(--green);
 }
 
+/* Featured project (spans both columns) */
+.project.featured {
+  border-color: rgba(34, 211, 238, 0.35);
+  background: linear-gradient(160deg, rgba(34, 211, 238, 0.06), rgba(168, 85, 247, 0.06));
+}
+.project.featured::before { opacity: 1; }
+@media (min-width: 640px) { .project.featured { grid-column: 1 / -1; } }
+.project .badge {
+  align-self: flex-start;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  color: var(--green);
+  border: 1px solid rgba(52, 211, 153, 0.5);
+  border-radius: 6px;
+  padding: 3px 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
+}
+.project .lang a { color: var(--cyan); text-decoration: none; }
+.project .lang a:hover { text-decoration: underline; }
+
 /* ---- Blog list ---- */
 .post-list { list-style: none; padding: 0; margin: 26px 0; }
 .post-list li { padding: 20px 0; border-bottom: 1px solid var(--border); }
