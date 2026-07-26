@@ -1,0 +1,12 @@
+<script>
+  // Wrap article tables so wide ones scroll on their own. Doing this in CSS would
+  // mean display:block on the table, which splits thead/tbody into separate
+  // anonymous tables and knocks their column widths out of alignment.
+  document.querySelectorAll('article.post table').forEach((table) => {
+    if (table.parentElement.classList.contains('table-scroll')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'table-scroll';
+    table.parentElement.insertBefore(wrap, table);
+    wrap.appendChild(table);
+  });
+</script>
