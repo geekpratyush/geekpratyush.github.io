@@ -5,6 +5,7 @@
       <a href="{{ '/' | relative_url }}"{% if page.nav == 'home' %} class="active"{% endif %}>Home</a>
       <a href="{{ '/projects.html' | relative_url }}"{% if page.nav == 'projects' %} class="active"{% endif %}>Projects</a>
       <a href="{{ '/blog.html' | relative_url }}"{% if page.nav == 'blog' %} class="active"{% endif %}>Blog</a>
+      {% include theme-switch.html %}
     </div>
   </div>
 </nav>

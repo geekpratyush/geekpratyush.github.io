@@ -1,0 +1,9 @@
+<script>
+  // Runs before first paint so the page never flashes the wrong theme.
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var system = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', saved || system);
+  })();
+</script>

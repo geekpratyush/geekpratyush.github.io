@@ -1267,7 +1267,3 @@ This blueprint provides a **production-ready foundation** for deploying Java ser
 5. **GitOps**: Use ArgoCD/Flux for declarative, version-controlled deployments
 
 **Start small, iterate fast, and always keep the pipeline green.** 🚀
-
----
-
-*Questions, or a stage you'd sequence differently? I'd genuinely like to hear it — [get in touch](mailto:pratyush.ranjan.mishra@gmail.com).*

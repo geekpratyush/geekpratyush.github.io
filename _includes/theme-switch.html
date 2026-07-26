@@ -1,0 +1,27 @@
+<div class="theme-switch" role="group" aria-label="Colour theme">
+  <button type="button" data-theme-set="light" aria-pressed="false" title="Light theme">Light</button>
+  <button type="button" data-theme-set="sepia" aria-pressed="false" title="Sepia theme">Sepia</button>
+  <button type="button" data-theme-set="dark" aria-pressed="false" title="Dark theme">Dark</button>
+</div>
+<script>
+  (function () {
+    var root = document.documentElement;
+    var btns = document.querySelectorAll('[data-theme-set]');
+    function sync() {
+      var cur = root.getAttribute('data-theme');
+      btns.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.dataset.themeSet === cur));
+      });
+    }
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        root.setAttribute('data-theme', b.dataset.themeSet);
+        try { localStorage.setItem('theme', b.dataset.themeSet); } catch (e) {}
+        sync();
+        // Diagrams are rendered SVG; they need redrawing for the new palette.
+        document.dispatchEvent(new CustomEvent('themechange', { detail: b.dataset.themeSet }));
+      });
+    });
+    sync();
+  })();
+</script>

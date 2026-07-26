@@ -4,16 +4,37 @@
   const codes = [...document.querySelectorAll('pre > code.language-mermaid')];
   if (codes.length) {
     const mermaid = (await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')).default;
-    // startOnLoad is useless here: this module runs after DOMContentLoaded has
-    // already fired. useMaxWidth:false keeps the natural size so zoom is honest.
+
+    const DIR_RE  = /^([ \t]*(?:flowchart|graph))[ \t]+(TB|TD|BT|LR|RL)\b/m;
+    const INIT_RE = /^\s*%%\{[^}]*\}%%\s*$/m;   // a diagram's own theme override
+
+    const mermaidTheme = () => {
+      const t = document.documentElement.getAttribute('data-theme');
+      return t === 'light' ? 'neutral' : t === 'sepia' ? 'base' : 'dark';
+    };
+    const themeVars = () => {
+      const css = getComputedStyle(document.documentElement);
+      const v = (n) => css.getPropertyValue(n).trim();
+      return {
+        background: v('--bg2'), primaryColor: v('--surface-hi'),
+        primaryTextColor: v('--text'), primaryBorderColor: v('--muted'),
+        lineColor: v('--muted'), secondaryColor: v('--surface'),
+        tertiaryColor: v('--bg'), textColor: v('--text'), fontFamily: v('--sans'),
+      };
+    };
+
+    // useMaxWidth:false keeps diagrams at natural size so zoom is honest.
     const noSqueeze = { useMaxWidth: false };
-    mermaid.initialize({
-      startOnLoad: false, theme: 'dark', securityLevel: 'loose',
+    const configure = () => mermaid.initialize({
+      // startOnLoad is useless here: this module runs after DOMContentLoaded.
+      startOnLoad: false, securityLevel: 'loose',
+      theme: mermaidTheme(), themeVariables: themeVars(),
       flowchart: noSqueeze, sequence: noSqueeze, gantt: noSqueeze,
       class: noSqueeze, state: noSqueeze, er: noSqueeze, journey: noSqueeze,
     });
+    configure();
 
-    const DIR_RE = /^([ \t]*(?:flowchart|graph))[ \t]+(TB|TD|BT|LR|RL)\b/m;
+    const redraws = [];
 
     codes.forEach((code, i) => {
       const source = code.textContent;
@@ -26,24 +47,23 @@
             <button type="button" data-dir="LR" title="Left-right layout">LR</button>
           </div>
           <div class="diagram-zoom">
-            <button type="button" data-act="out" title="Zoom out">−</button>
+            <button type="button" data-act="out" title="Zoom out">&minus;</button>
             <output title="Current zoom">100%</output>
             <button type="button" data-act="in" title="Zoom in">+</button>
             <button type="button" data-act="fit" title="Fit to width">Fit</button>
-            <button type="button" data-act="full" title="Fullscreen">⛶</button>
+            <button type="button" data-act="full" title="Fullscreen">Full</button>
           </div>
         </div>
         <div class="diagram-viewport"><div class="diagram-canvas"></div></div>
-        <figcaption>Drag to pan · scroll to move · Fit resets the view</figcaption>`;
+        <figcaption>Drag to pan. Fit resets the view.</figcaption>`;
       code.closest('pre').replaceWith(figure);
 
       const viewport = figure.querySelector('.diagram-viewport');
       const canvas   = figure.querySelector('.diagram-canvas');
       const out      = figure.querySelector('output');
-      const dirs     = figure.querySelector('.diagram-dirs');
 
       const hasDir = DIR_RE.test(source);
-      if (hasDir) dirs.hidden = false;
+      if (hasDir) figure.querySelector('.diagram-dirs').hidden = false;
       let dir = hasDir ? source.match(DIR_RE)[2] : null;
       let scale = 1, natural = 0;
 
@@ -62,47 +82,51 @@
       };
       const fit = () => {
         if (!natural) return;
-        const avail = viewport.clientWidth - 4;
-        scale = Math.min(1, avail / natural);
+        scale = Math.min(1, (viewport.clientWidth - 4) / natural);
         apply();
         viewport.scrollLeft = 0;
       };
+      const syncHeight = () => {
+        const h = canvas.firstElementChild?.getBoundingClientRect().height || 0;
+        viewport.style.height = Math.min(Math.ceil(h) + 2, Math.round(window.innerHeight * 0.85)) + 'px';
+      };
 
+      let observer = null;
       const draw = async () => {
-        const src = dir ? source.replace(DIR_RE, `$1 ${dir}`) : source;
+        // Drop the diagram's own %%{init}%% so it follows the page theme.
+        let src = source.replace(INIT_RE, '');
+        if (dir) src = src.replace(DIR_RE, `$1 ${dir}`);
         try {
-          const { svg } = await mermaid.render(`diagram-${i}-${dir || 'x'}-${Date.now()}`, src);
+          const { svg } = await mermaid.render(`d${i}-${dir || 'x'}-${Date.now()}`, src);
           canvas.innerHTML = svg;
           const el = canvas.querySelector('svg');
           natural = el.viewBox?.baseVal?.width || el.getBoundingClientRect().width;
-          // Height must follow the scaled content or the figure leaves a gap.
-          const sync = () => {
-            const h = canvas.firstElementChild?.getBoundingClientRect().height || 0;
-            viewport.style.height = Math.min(Math.ceil(h) + 2, Math.round(window.innerHeight * 0.85)) + 'px';
-          };
-          fit(); sync();
-          new ResizeObserver(sync).observe(canvas);
+          fit();
+          syncHeight();
+          observer?.disconnect();
+          observer = new ResizeObserver(syncHeight);
+          observer.observe(canvas);
         } catch (err) {
           canvas.innerHTML = `<p class="diagram-err">Diagram failed to render: ${err.message}</p>`;
         }
       };
 
       figure.querySelectorAll('[data-dir]').forEach((b) => b.addEventListener('click', () => {
-        dir = b.dataset.dir === 'TD' ? 'TD' : 'LR';
-        figure.querySelectorAll('[data-dir]').forEach(x =>
-          x.classList.toggle('on', x.dataset.dir === b.dataset.dir));
+        dir = b.dataset.dir;
+        figure.querySelectorAll('[data-dir]').forEach((x) =>
+          x.classList.toggle('on', x.dataset.dir === dir));
         draw();
       }));
 
       figure.querySelector('.diagram-zoom').addEventListener('click', (e) => {
         const act = e.target.dataset.act;
         if (!act) return;
-        if (act === 'in')  { scale = Math.min(4, scale * 1.25); apply(); }
-        if (act === 'out') { scale = Math.max(0.1, scale / 1.25); apply(); }
-        if (act === 'fit') fit();
+        if (act === 'in')  { scale = Math.min(4, scale * 1.25); apply(); syncHeight(); }
+        if (act === 'out') { scale = Math.max(0.1, scale / 1.25); apply(); syncHeight(); }
+        if (act === 'fit') { fit(); syncHeight(); }
         if (act === 'full') {
           if (document.fullscreenElement) document.exitFullscreen();
-          else figure.requestFullscreen?.().then(() => setTimeout(fit, 120));
+          else figure.requestFullscreen?.().then(() => setTimeout(() => { fit(); syncHeight(); }, 120));
         }
       });
 
@@ -111,7 +135,8 @@
       viewport.addEventListener('pointerdown', (e) => {
         down = true; sx = e.clientX; sy = e.clientY;
         sl = viewport.scrollLeft; st = viewport.scrollTop;
-        viewport.setPointerCapture(e.pointerId); viewport.classList.add('grabbing');
+        viewport.setPointerCapture(e.pointerId);
+        viewport.classList.add('grabbing');
       });
       viewport.addEventListener('pointermove', (e) => {
         if (!down) return;
@@ -122,10 +147,19 @@
       viewport.addEventListener('pointerup', up);
       viewport.addEventListener('pointercancel', up);
 
-      window.addEventListener('resize', () => { if (Math.abs(scale - 1) < 0.001 || scale < 1) fit(); });
+      window.addEventListener('resize', () => { if (scale <= 1) fit(); });
 
-      if (hasDir) figure.querySelector(`[data-dir="${dir === 'LR' ? 'LR' : 'TD'}"]`)?.classList.add('on');
+      if (hasDir) {
+        figure.querySelector(`[data-dir="${dir === 'LR' ? 'LR' : 'TD'}"]`)?.classList.add('on');
+      }
+      redraws.push(draw);
       draw();
+    });
+
+    // An SVG already in the DOM keeps its old palette, so redraw on theme change.
+    document.addEventListener('themechange', () => {
+      configure();
+      redraws.forEach((fn) => fn());
     });
   }
 </script>
