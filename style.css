@@ -61,7 +61,14 @@ body::after {
 }
 
 a { color: var(--cyan); }
-.wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+.wrap {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(18px, 4vw, 44px);
+}
+/* Narrower measure for pages that are mostly prose */
+.wrap.narrow { max-width: 860px; }
 
 /* ---- Nav ---- */
 .nav {
@@ -285,6 +292,26 @@ section p { color: #cfcfe0; }
 .post-list .date { display: block; color: var(--purple); font-size: 0.8rem; margin-bottom: 6px; font-family: var(--mono); }
 .post-list .excerpt { color: var(--muted); margin: 8px 0 0; }
 
+/* Full-width article, readable text: prose is capped in ch, code/tables/diagrams
+   stretch to the whole container. */
+article.post > p,
+article.post > ul,
+article.post > ol,
+article.post > blockquote,
+article.post > h1,
+article.post > h2,
+article.post > h3,
+article.post > h4,
+article.post > .post-meta,
+article.post > .toc { max-width: 76ch; }
+
+article.post > div.highlighter-rouge,
+article.post > div.language-plaintext,
+article.post > pre,
+article.post > .table-scroll,
+article.post > pre.mermaid,
+article.post > figure { max-width: none; }
+
 /* Sticky nav is ~57px; keep anchored headings clear of it */
 article.post h1, article.post h2, article.post h3, article.post h4 { scroll-margin-top: 76px; }
 
@@ -439,6 +466,11 @@ article.post table {
   width: 100%;
   font-size: 0.9rem;
   font-family: var(--mono);
+  /* Opaque: otherwise the fixed grid backdrop shows through the cells and reads
+     as stray column rules. */
+  background: var(--bg2);
+  border-radius: 8px;
+  overflow: hidden;
 }
 article.post th, article.post td {
   border: 1px solid var(--border);
@@ -509,3 +541,36 @@ pre.mermaid[data-processed] { text-align: center; }
 /* Wide tables scroll inside their wrapper (added by the layout script) */
 .table-scroll { overflow-x: auto; margin: 24px 0; -webkit-overflow-scrolling: touch; }
 .table-scroll table { margin: 0; min-width: 32rem; }
+
+
+/* ==== Responsive ====================================================== */
+@media (max-width: 760px) {
+  body { font-size: 15.5px; }
+  .nav .wrap { flex-wrap: wrap; gap: 10px; }
+  .nav .menu { gap: 16px; }
+  header.hero { padding: 56px 0 40px; }
+  .avatar { width: 96px; height: 96px; }
+  article.post { padding: 32px 0; }
+  article.post h2 { margin-top: 30px; padding-top: 20px; }
+  .section-nav { gap: 8px; }
+  .section-nav a { padding: 6px 11px; font-size: 0.78rem; }
+  pre, pre.mermaid { padding: 12px; border-radius: 8px; }
+  code, pre { font-size: 0.84em; }
+  .post-list a { font-size: 1.08rem; }
+  footer { padding: 32px 0; }
+}
+
+@media (max-width: 420px) {
+  .nav .menu { gap: 13px; }
+  .nav .menu a { font-size: 0.8rem; }
+  .links a { padding: 7px 12px; font-size: 0.8rem; }
+  article.post h1 { font-size: 1.5rem; }
+}
+
+/* Nothing may push the page sideways. Note: this must not go on <html> — that
+   would make the root a scroll container and break the sticky nav. */
+body { max-width: 100%; overflow-x: clip; }
+
+/* Keep listing/prose text at a readable measure even in the wide container */
+.post-list, .page-head p, section#about p, section#featured p, section#writing > p,
+.bio, article.post .post-foot { max-width: 76ch; }
