@@ -1,0 +1,94 @@
+# Sveltia CMS configuration.
+#
+# base_url must point at your own OAuth client: GitHub requires a client secret
+# for the token exchange, which a static site cannot hold. Deploy
+# https://github.com/sveltia/sveltia-cms-auth to Cloudflare Workers (free) and
+# put its URL below. Until then, sign-in will fail.
+backend:
+  name: github
+  repo: geekpratyush/geekpratyush.github.io
+  branch: main
+  base_url: https://REPLACE-WITH-YOUR-WORKER.workers.dev
+
+# Saving commits straight to main, which publishes. Sveltia does not support
+# editorial_workflow (PR-based review) yet. To stage instead of publish, point
+# `branch` at a separate branch and merge it when you are ready.
+
+media_folder: assets/img
+public_folder: /assets/img
+
+# Shared post fields, reused by every section below.
+_post_fields: &post_fields
+  - { name: title, label: Title, widget: string }
+  - {
+      name: description,
+      label: Summary,
+      widget: text,
+      hint: One or two sentences. Shown in post lists and search results.,
+    }
+  - {
+      name: tags,
+      label: Tags,
+      widget: list,
+      required: false,
+      hint: 'e.g. java, kubernetes',
+    }
+  - {
+      name: mermaid,
+      label: Contains a mermaid diagram,
+      widget: boolean,
+      default: false,
+      required: false,
+      hint: Turn on only if the post has a ```mermaid block — this loads the diagram viewer.,
+    }
+  - { name: body, label: Body, widget: markdown }
+
+collections:
+  - name: it-design
+    label: IT Design
+    label_singular: IT Design post
+    folder: _posts/it-design
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    preview_path: it-design/{{slug}}
+    sortable_fields: [commit_date, title]
+    fields: *post_fields
+
+  - name: coding
+    label: Coding
+    label_singular: Coding post
+    folder: _posts/coding
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    preview_path: coding/{{slug}}
+    sortable_fields: [commit_date, title]
+    fields: *post_fields
+
+  - name: devops
+    label: DevOps
+    label_singular: DevOps post
+    folder: _posts/devops
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    preview_path: devops/{{slug}}
+    sortable_fields: [commit_date, title]
+    fields: *post_fields
+
+  - name: life
+    label: Life & Craft
+    label_singular: Life & Craft post
+    folder: _posts/life
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    preview_path: life/{{slug}}
+    sortable_fields: [commit_date, title]
+    fields: *post_fields
+
+  # Unpublished work: no date in the filename, so Jekyll never builds it.
+  - name: drafts
+    label: Drafts
+    label_singular: Draft
+    folder: _drafts
+    create: true
+    slug: '{{slug}}'
+    fields: *post_fields
