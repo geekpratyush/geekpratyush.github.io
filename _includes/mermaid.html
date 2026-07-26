@@ -8,19 +8,77 @@
     const DIR_RE  = /^([ \t]*(?:flowchart|graph))[ \t]+(TB|TD|BT|LR|RL)\b/m;
     const INIT_RE = /^\s*%%\{[^}]*\}%%\s*$/m;   // a diagram's own theme override
 
-    const mermaidTheme = () => {
-      const t = document.documentElement.getAttribute('data-theme');
-      return t === 'light' ? 'neutral' : t === 'sepia' ? 'base' : 'dark';
-    };
+    // Always 'base': it is the only built-in theme that fully honours supplied
+    // themeVariables. 'dark' and 'neutral' compute their own palette and ignore
+    // ours, which left node fills at mermaid's default #1f2020 on light themes.
+    const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
     const themeVars = () => {
       const css = getComputedStyle(document.documentElement);
       const v = (n) => css.getPropertyValue(n).trim();
+      // These must be opaque: mermaid cannot derive its palette from rgba()
+      // values and silently falls back to a dark default if given one.
       return {
-        background: v('--bg2'), primaryColor: v('--surface-hi'),
-        primaryTextColor: v('--text'), primaryBorderColor: v('--muted'),
-        lineColor: v('--muted'), secondaryColor: v('--surface'),
-        tertiaryColor: v('--bg'), textColor: v('--text'), fontFamily: v('--sans'),
+        darkMode: isDark(),
+        background: v('--dg-canvas'),
+        // mainBkg/nodeBorder are what flowchart nodes actually read.
+        mainBkg: v('--dg-node'),
+        nodeBorder: v('--dg-border'),
+        defaultLinkColor: v('--dg-line'),
+        primaryColor: v('--dg-node'),
+        secondaryColor: v('--dg-cluster'),
+        tertiaryColor: v('--dg-cluster'),
+        primaryBorderColor: v('--dg-border'),
+        secondaryBorderColor: v('--dg-border'),
+        tertiaryBorderColor: v('--dg-border'),
+        primaryTextColor: v('--dg-text'),
+        secondaryTextColor: v('--dg-text'),
+        tertiaryTextColor: v('--dg-text'),
+        textColor: v('--dg-text'),
+        nodeTextColor: v('--dg-text'),
+        lineColor: v('--dg-line'),
+        edgeLabelBackground: v('--dg-canvas'),
+        clusterBkg: v('--dg-cluster'),
+        clusterBorder: v('--dg-border'),
+        titleColor: v('--dg-text'),
+        fontFamily: v('--sans'),
       };
+    };
+
+
+    // Diagrams often hardcode `style X fill:#1a3a4a,color:#fff` for dark backgrounds.
+    // On a light theme those stay dark and the contrast breaks. Flip the lightness
+    // while keeping the author's hue coding intact.
+    const hex2rgb = (h) => {
+      h = h.replace('#', '');
+      if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+      return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+    };
+    const lum = ([r, g, b]) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    const toHex = ([r, g, b]) =>
+      '#' + [r, g, b].map((n) => Math.round(Math.max(0, Math.min(255, n))).toString(16).padStart(2, '0')).join('');
+    const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+    const cssRgb = (name) => {
+      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      const m = v.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+      if (m) return [+m[1], +m[2], +m[3]];
+      if (v.startsWith('#')) return hex2rgb(v);
+      return [255, 255, 255];
+    };
+
+    const recolor = (src) => {
+      const theme = document.documentElement.getAttribute('data-theme');
+      if (theme !== 'light' && theme !== 'sepia') return src;
+      const surface = cssRgb('--dg-canvas');
+      const textCol = cssRgb('--dg-text');
+      return src
+        // Dark fills become tinted washes of the page surface, hue preserved.
+        .replace(/fill:\s*(#[0-9a-fA-F]{3,6})/g, (m, hx) => {
+          const rgb = hex2rgb(hx);
+          return lum(rgb) < 0.5 ? 'fill:' + toHex(mix(rgb, surface, 0.82)) : m;
+        })
+        // Light label colours become the theme's text colour.
+        .replace(/color:\s*(#[0-9a-fA-F]{3,6})/g, (m, hx) =>
+          lum(hex2rgb(hx)) > 0.6 ? 'color:' + toHex(textCol) : m);
     };
 
     // useMaxWidth:false keeps diagrams at natural size so zoom is honest.
@@ -28,7 +86,7 @@
     const configure = () => mermaid.initialize({
       // startOnLoad is useless here: this module runs after DOMContentLoaded.
       startOnLoad: false, securityLevel: 'loose',
-      theme: mermaidTheme(), themeVariables: themeVars(),
+      theme: 'base', themeVariables: themeVars(),
       flowchart: noSqueeze, sequence: noSqueeze, gantt: noSqueeze,
       class: noSqueeze, state: noSqueeze, er: noSqueeze, journey: noSqueeze,
     });
@@ -94,7 +152,7 @@
       let observer = null;
       const draw = async () => {
         // Drop the diagram's own %%{init}%% so it follows the page theme.
-        let src = source.replace(INIT_RE, '');
+        let src = recolor(source.replace(INIT_RE, ''));
         if (dir) src = src.replace(DIR_RE, `$1 ${dir}`);
         try {
           const { svg } = await mermaid.render(`d${i}-${dir || 'x'}-${Date.now()}`, src);

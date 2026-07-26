@@ -33,6 +33,12 @@
   --h1-from: #ffffff;
   --shadow: rgba(0, 0, 0, 0.5);
   --grad: linear-gradient(120deg, #22d3ee 0%, #a855f7 100%);
+  --dg-canvas: #0c0c15;
+  --dg-node: #191b24;
+  --dg-border: #3c4150;
+  --dg-text: #e9e9f2;
+  --dg-line: #8b8ba7;
+  --dg-cluster: #12141d;
 }
 
 /* ---- Light ---- */
@@ -59,6 +65,12 @@
   --h1-from: #14161c;
   --shadow: rgba(15, 23, 42, 0.14);
   --grad: linear-gradient(120deg, #0e7490 0%, #6d28d9 100%);
+  --dg-canvas: #f4f5f8;
+  --dg-node: #ffffff;
+  --dg-border: #c2c8d6;
+  --dg-text: #14161c;
+  --dg-line: #5f6579;
+  --dg-cluster: #e9edf4;
 }
 
 /* ---- Sepia (warm, easy on the eyes for long reads) ---- */
@@ -85,6 +97,12 @@
   --h1-from: #33291c;
   --shadow: rgba(67, 51, 33, 0.16);
   --grad: linear-gradient(120deg, #0f6f6c 0%, #8a4b2a 100%);
+  --dg-canvas: #efe6d4;
+  --dg-node: #fffaf0;
+  --dg-border: #cbbfa8;
+  --dg-text: #33291c;
+  --dg-line: #7d6c56;
+  --dg-cluster: #e8dcc6;
 }
 
 * { box-sizing: border-box; }
@@ -798,3 +816,6 @@ section#about p.pivot {
   section#about p { font-size: 1.05rem; }
   section#about p.pivot { font-size: 1.12rem; padding-left: 16px; }
 }
+
+/* The diagram surface follows the theme */
+.diagram, .diagram-viewport { background: var(--dg-canvas); }
