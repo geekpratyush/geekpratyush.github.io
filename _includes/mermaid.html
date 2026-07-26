@@ -1,32 +1,131 @@
 <script type="module">
-  // Kramdown emits ```mermaid as <pre><code class="language-mermaid">.
-  // Rewrite those into the <pre class="mermaid"> nodes mermaid expects, then render.
-  const blocks = document.querySelectorAll('pre > code.language-mermaid');
-  for (const code of blocks) {
-    const pre = document.createElement('pre');
-    pre.className = 'mermaid';
-    pre.textContent = code.textContent;
-    code.parentElement.replaceWith(pre);
-  }
-  if (blocks.length) {
+  // Kramdown emits ```mermaid as <pre><code class="language-mermaid">. Turn each one
+  // into an interactive viewer: direction toggle (TD/LR), zoom, pan, fullscreen.
+  const codes = [...document.querySelectorAll('pre > code.language-mermaid')];
+  if (codes.length) {
     const mermaid = (await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')).default;
     // startOnLoad is useless here: this module runs after DOMContentLoaded has
-    // already fired, so the render must be kicked off explicitly.
-    // useMaxWidth:false keeps diagrams at their natural size instead of squeezing a
-    // 3000px flowchart into the text column; the wrapper scrolls horizontally.
+    // already fired. useMaxWidth:false keeps the natural size so zoom is honest.
     const noSqueeze = { useMaxWidth: false };
     mermaid.initialize({
-      startOnLoad: false,
-      theme: 'dark',
-      securityLevel: 'loose',
-      flowchart: noSqueeze,
-      sequence: noSqueeze,
-      gantt: noSqueeze,
-      class: noSqueeze,
-      state: noSqueeze,
-      er: noSqueeze,
-      journey: noSqueeze,
+      startOnLoad: false, theme: 'dark', securityLevel: 'loose',
+      flowchart: noSqueeze, sequence: noSqueeze, gantt: noSqueeze,
+      class: noSqueeze, state: noSqueeze, er: noSqueeze, journey: noSqueeze,
     });
-    await mermaid.run({ querySelector: 'pre.mermaid' });
+
+    const DIR_RE = /^([ \t]*(?:flowchart|graph))[ \t]+(TB|TD|BT|LR|RL)\b/m;
+
+    codes.forEach((code, i) => {
+      const source = code.textContent;
+      const figure = document.createElement('figure');
+      figure.className = 'diagram';
+      figure.innerHTML = `
+        <div class="diagram-bar">
+          <div class="diagram-dirs" hidden>
+            <button type="button" data-dir="TD" title="Top-down layout">TD</button>
+            <button type="button" data-dir="LR" title="Left-right layout">LR</button>
+          </div>
+          <div class="diagram-zoom">
+            <button type="button" data-act="out" title="Zoom out">−</button>
+            <output title="Current zoom">100%</output>
+            <button type="button" data-act="in" title="Zoom in">+</button>
+            <button type="button" data-act="fit" title="Fit to width">Fit</button>
+            <button type="button" data-act="full" title="Fullscreen">⛶</button>
+          </div>
+        </div>
+        <div class="diagram-viewport"><div class="diagram-canvas"></div></div>
+        <figcaption>Drag to pan · scroll to move · Fit resets the view</figcaption>`;
+      code.closest('pre').replaceWith(figure);
+
+      const viewport = figure.querySelector('.diagram-viewport');
+      const canvas   = figure.querySelector('.diagram-canvas');
+      const out      = figure.querySelector('output');
+      const dirs     = figure.querySelector('.diagram-dirs');
+
+      const hasDir = DIR_RE.test(source);
+      if (hasDir) dirs.hidden = false;
+      let dir = hasDir ? source.match(DIR_RE)[2] : null;
+      let scale = 1, natural = 0;
+
+      // Resize the SVG itself rather than CSS-transforming it: a transform scales
+      // visually but leaves the layout box at natural size, so the viewport keeps
+      // ~1800px of empty scrollable space and the diagram looks cut off.
+      const apply = () => {
+        const svg = canvas.querySelector('svg');
+        if (svg && natural) {
+          svg.removeAttribute('width');
+          svg.removeAttribute('height');
+          svg.style.width = (natural * scale) + 'px';
+          svg.style.height = 'auto';
+        }
+        out.textContent = Math.round(scale * 100) + '%';
+      };
+      const fit = () => {
+        if (!natural) return;
+        const avail = viewport.clientWidth - 4;
+        scale = Math.min(1, avail / natural);
+        apply();
+        viewport.scrollLeft = 0;
+      };
+
+      const draw = async () => {
+        const src = dir ? source.replace(DIR_RE, `$1 ${dir}`) : source;
+        try {
+          const { svg } = await mermaid.render(`diagram-${i}-${dir || 'x'}-${Date.now()}`, src);
+          canvas.innerHTML = svg;
+          const el = canvas.querySelector('svg');
+          natural = el.viewBox?.baseVal?.width || el.getBoundingClientRect().width;
+          // Height must follow the scaled content or the figure leaves a gap.
+          const sync = () => {
+            const h = canvas.firstElementChild?.getBoundingClientRect().height || 0;
+            viewport.style.height = Math.min(Math.ceil(h) + 2, Math.round(window.innerHeight * 0.85)) + 'px';
+          };
+          fit(); sync();
+          new ResizeObserver(sync).observe(canvas);
+        } catch (err) {
+          canvas.innerHTML = `<p class="diagram-err">Diagram failed to render: ${err.message}</p>`;
+        }
+      };
+
+      figure.querySelectorAll('[data-dir]').forEach((b) => b.addEventListener('click', () => {
+        dir = b.dataset.dir === 'TD' ? 'TD' : 'LR';
+        figure.querySelectorAll('[data-dir]').forEach(x =>
+          x.classList.toggle('on', x.dataset.dir === b.dataset.dir));
+        draw();
+      }));
+
+      figure.querySelector('.diagram-zoom').addEventListener('click', (e) => {
+        const act = e.target.dataset.act;
+        if (!act) return;
+        if (act === 'in')  { scale = Math.min(4, scale * 1.25); apply(); }
+        if (act === 'out') { scale = Math.max(0.1, scale / 1.25); apply(); }
+        if (act === 'fit') fit();
+        if (act === 'full') {
+          if (document.fullscreenElement) document.exitFullscreen();
+          else figure.requestFullscreen?.().then(() => setTimeout(fit, 120));
+        }
+      });
+
+      // Drag to pan
+      let down = false, sx = 0, sy = 0, sl = 0, st = 0;
+      viewport.addEventListener('pointerdown', (e) => {
+        down = true; sx = e.clientX; sy = e.clientY;
+        sl = viewport.scrollLeft; st = viewport.scrollTop;
+        viewport.setPointerCapture(e.pointerId); viewport.classList.add('grabbing');
+      });
+      viewport.addEventListener('pointermove', (e) => {
+        if (!down) return;
+        viewport.scrollLeft = sl - (e.clientX - sx);
+        viewport.scrollTop  = st - (e.clientY - sy);
+      });
+      const up = () => { down = false; viewport.classList.remove('grabbing'); };
+      viewport.addEventListener('pointerup', up);
+      viewport.addEventListener('pointercancel', up);
+
+      window.addEventListener('resize', () => { if (Math.abs(scale - 1) < 0.001 || scale < 1) fit(); });
+
+      if (hasDir) figure.querySelector(`[data-dir="${dir === 'LR' ? 'LR' : 'TD'}"]`)?.classList.add('on');
+      draw();
+    });
   }
 </script>

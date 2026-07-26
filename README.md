@@ -38,6 +38,22 @@ themselves — there are no lists to hand-edit.
 **Drafts:** put the file in a `_drafts/` folder with no date in the filename; it won't
 publish. Preview with `bundle exec jekyll serve --drafts`.
 
+## Diagrams
+
+Fenced ```mermaid blocks become an interactive viewer — but only when the post's
+front matter has `mermaid: true`, which is what loads the renderer.
+
+The viewer gives readers **TD / LR** buttons to switch the layout direction,
+zoom in/out, **Fit** (scale to the column width, the default on load), and
+fullscreen. Wide diagrams can also be dragged to pan.
+
+The TD/LR buttons only appear when the diagram declares a direction, i.e. it
+starts with `flowchart`/`graph` followed by `TB|TD|BT|LR|RL`. Other diagram
+types (sequence, gantt, class, ...) still render, just without the toggle.
+
+If a diagram's labels contain `{{ ... }}`, wrap the block in `{% raw %}` /
+`{% endraw %}` so Liquid doesn't try to evaluate them.
+
 ## Adding a new section
 
 1. Add an entry to `_data/sections.yml` (`slug`, `title`, `icon`, `blurb`).
