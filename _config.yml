@@ -1,0 +1,53 @@
+# Site settings
+title: Pratyush Ranjan Mishra
+description: >-
+  Personal site of Pratyush Ranjan Mishra — software engineer. Writing on
+  integration tooling, architecture, delivery, and the craft of building software.
+url: "https://geekpratyush.github.io"
+baseurl: ""
+
+author:
+  name: Pratyush Ranjan Mishra
+  github: geekpratyush
+  email: pratyush.ranjan.mishra@gmail.com
+
+# Build
+markdown: kramdown
+highlighter: rouge
+permalink: /:categories/:title/
+timezone: Asia/Kolkata
+
+kramdown:
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+  # Folder inside _posts/ -> section. Add a block here when adding a section.
+  - scope: { path: "_posts/it-design" }
+    values: { categories: [it-design] }
+  - scope: { path: "_posts/coding" }
+    values: { categories: [coding] }
+  - scope: { path: "_posts/devops" }
+    values: { categories: [devops] }
+  - scope: { path: "_posts/life" }
+    values: { categories: [life] }
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .claude
+  # source drop of the k8s guide; the published copy is in _posts/devops/
+  - java-kubernetes-deployment-guide.md

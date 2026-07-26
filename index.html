@@ -1,94 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pratyush Ranjan Mishra</title>
-  <meta name="description" content="Personal site of Pratyush Ranjan Mishra — software engineer." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👨‍💻</text></svg>" />
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <nav class="nav">
-    <div class="wrap">
-      <a class="brand" href="index.html">Pratyush</a>
-      <div class="menu">
-        <a href="index.html" class="active">Home</a>
-        <a href="projects.html">Projects</a>
-        <a href="blog.html">Blog</a>
-      </div>
-    </div>
+---
+layout: default
+title: Pratyush Ranjan Mishra
+description: Personal site of Pratyush Ranjan Mishra — software engineer.
+nav: home
+---
+
+<header class="hero">
+  <span class="avatar-ring">
+    <img class="avatar" src="https://github.com/geekpratyush.png" alt="Pratyush Ranjan Mishra" />
+  </span>
+  <h1>Pratyush Ranjan Mishra</h1>
+  <p class="terminal">
+    <span class="prompt">$</span> whoami &rarr; software engineer · java &amp; go · integration tooling<span class="cursor"></span>
+  </p>
+  <nav class="links">
+    <a href="https://github.com/geekpratyush">GitHub</a>
+    <a href="https://www.linkedin.com/in/leadtherightway/">LinkedIn</a>
+    <a href="mailto:pratyush.ranjan.mishra@gmail.com">Email</a>
   </nav>
+</header>
 
-  <div class="wrap">
-    <header class="hero">
-      <span class="avatar-ring">
-        <img class="avatar" src="https://github.com/geekpratyush.png" alt="Pratyush Ranjan Mishra" />
+<section id="about">
+  <h2>About</h2>
+  <p>
+    Hi, I'm <strong>Pratyush Ranjan Mishra</strong> — a software engineer who builds
+    reliable backend systems and developer tooling for enterprise integration.
+  </p>
+  <p>
+    Much of my work sits where messy real-world protocols meet clean, usable tools:
+    universal protocol workbenches like
+    <a href="https://github.com/geekpratyush/nexuslink">NexusLink</a> and
+    <a href="https://github.com/geekpratyush/conduit">Conduit</a> that put REST, Kafka,
+    gRPC, SQL, WebSocket and MCP/LLM connections behind one console, plus libraries and
+    transformers for financial message formats such as SWIFT and ISO. I work mainly in
+    <strong>Java</strong> and <strong>Go</strong>, and I care about Enterprise
+    Integration Patterns, clean APIs, and tools that make hard integrations feel simple.
+  </p>
+</section>
+
+<section id="skills">
+  <h2>Skills</h2>
+  <ul class="skills">
+    <li>Java</li>
+    <li>Quarkus</li>
+    <li>Go</li>
+    <li>Enterprise Integration Patterns</li>
+    <li>REST / gRPC / Kafka</li>
+    <li>Gradle</li>
+  </ul>
+</section>
+
+<section id="featured">
+  <h2>Featured Work</h2>
+  <p>
+    <strong>ModelStudio</strong> — an interactive, browser-based studio you can
+    <a href="https://geekpratyush.github.io/ModelStudio/">try live right now</a>, no install needed.
+  </p>
+  <p>
+    I also build universal protocol workbenches and financial-message tooling.
+    See the <a href="{{ '/projects.html' | relative_url }}">Projects</a> page for the full list.
+  </p>
+</section>
+
+<section id="writing">
+  <h2>Writing</h2>
+  <p>
+    I write in a few different directions — architecture and design, hands-on coding,
+    delivery and operations, and the occasional note on the craft itself.
+  </p>
+
+  <div class="project-grid section-grid">
+    {%- for s in site.data.sections %}
+    {%- assign count = site.categories[s.slug] | size %}
+    <div class="project">
+      <h3><a href="{{ '/' | append: s.slug | append: '/' | relative_url }}">{{ s.title }}</a></h3>
+      <p>{{ s.blurb }}</p>
+      <span class="lang">
+        <span class="dot"{% if count == 0 %} style="background:#8b8ba7;box-shadow:none"{% endif %}></span>
+        {% if count == 0 %}coming soon{% else %}{{ count }} post{% if count != 1 %}s{% endif %}{% endif %}
       </span>
-      <h1>Pratyush Ranjan Mishra</h1>
-      <p class="terminal">
-        <span class="prompt">$</span> whoami &rarr; software engineer · java &amp; go · integration tooling<span class="cursor"></span>
-      </p>
-      <nav class="links">
-        <a href="https://github.com/geekpratyush">GitHub</a>
-        <a href="https://www.linkedin.com/in/leadtherightway/">LinkedIn</a>
-        <a href="mailto:pratyush.ranjan.mishra@gmail.com">Email</a>
-        <!-- Add X/Twitter or other links here when ready -->
-
-      </nav>
-    </header>
-
-    <section id="about">
-      <h2>About</h2>
-      <p>
-        Hi, I'm <strong>Pratyush Ranjan Mishra</strong> — a software engineer who builds
-        reliable backend systems and developer tooling for enterprise integration.
-      </p>
-      <p>
-        Much of my work sits where messy real-world protocols meet clean, usable tools:
-        universal protocol workbenches like
-        <a href="https://github.com/geekpratyush/nexuslink">NexusLink</a> and
-        <a href="https://github.com/geekpratyush/conduit">Conduit</a> that put REST, Kafka,
-        gRPC, SQL, WebSocket and MCP/LLM connections behind one console, plus libraries and
-        transformers for financial message formats such as SWIFT and ISO. I work mainly in
-        <strong>Java</strong> and <strong>Go</strong>, and I care about Enterprise
-        Integration Patterns, clean APIs, and tools that make hard integrations feel simple.
-      </p>
-      <p style="color: var(--muted); font-size: 0.95rem;">
-        <!-- TODO: edit freely — add your current role/company and what you're excited about. -->
-      </p>
-    </section>
-
-    <section id="skills">
-      <h2>Skills</h2>
-      <ul class="skills">
-        <li>Java</li>
-        <li>Quarkus</li>
-        <li>Go</li>
-        <li>Enterprise Integration Patterns</li>
-        <li>REST / gRPC / Kafka</li>
-        <li>Gradle</li>
-        <!-- TODO: add/remove to match you -->
-      </ul>
-    </section>
-
-    <section id="featured">
-      <h2>Featured Work</h2>
-      <p>
-        <strong>ModelStudio</strong> — an interactive, browser-based studio you can
-        <a href="https://geekpratyush.github.io/ModelStudio/">try live right now</a>, no install needed.
-      </p>
-      <p>
-        I also build universal protocol workbenches and financial-message tooling.
-        See the <a href="projects.html">Projects</a> page for the full list, or
-        read the <a href="blog.html">Blog</a> for write-ups.
-      </p>
-    </section>
+    </div>
+    {%- endfor %}
   </div>
 
-  <footer>
-    © <span id="year"></span> Pratyush Ranjan Mishra · Built with GitHub Pages
-  </footer>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
-</body>
-</html>
+  {%- assign latest = site.posts | slice: 0, 4 %}
+  {%- if latest.size > 0 %}
+  <h3 class="sub">Latest</h3>
+  {% include post-list.html posts=latest show_section=true %}
+  <p class="more"><a href="{{ '/blog.html' | relative_url }}">All posts →</a></p>
+  {%- endif %}
+</section>

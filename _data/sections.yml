@@ -1,0 +1,21 @@
+# Each entry needs a matching page in topics/<slug>.md
+# and posts live in _posts/<slug>/
+- slug: it-design
+  title: IT Design
+  icon: "◇"
+  blurb: Architecture, system design, trade-offs, and the diagrams behind them.
+
+- slug: coding
+  title: Coding
+  icon: "{ }"
+  blurb: Languages, patterns, and things I learned the hard way — Java, Python, Go and more.
+
+- slug: devops
+  title: DevOps
+  icon: "⤓"
+  blurb: CI/CD, containers, Kubernetes, observability, and shipping without drama.
+
+- slug: life
+  title: Life & Craft
+  icon: "◌"
+  blurb: Career notes, habits, and advice I wish someone had given me earlier.

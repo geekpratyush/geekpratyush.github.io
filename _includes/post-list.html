@@ -1,0 +1,23 @@
+{%- comment -%}
+  Post list in the site's existing .post-list style.
+  Usage: {% include post-list.html posts=some_posts show_section=true %}
+{%- endcomment -%}
+{%- if include.posts.size > 0 -%}
+<ul class="post-list">
+  {%- for post in include.posts %}
+  <li>
+    <span class="date">{{ post.date | date: "%B %-d, %Y" }}</span>
+    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    {%- if post.description %}<p class="excerpt">{{ post.description }}</p>{% endif %}
+    {%- if include.show_section %}
+      {%- assign slug = post.categories.first -%}
+      {%- for s in site.data.sections -%}
+        {%- if s.slug == slug %}<span class="tag-chip">{{ s.title }}</span>{% endif -%}
+      {%- endfor -%}
+    {%- endif %}
+  </li>
+  {%- endfor %}
+</ul>
+{%- else -%}
+  <p class="empty">No posts in this section yet — writing is in progress.</p>
+{%- endif -%}

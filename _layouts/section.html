@@ -1,0 +1,16 @@
+---
+layout: default
+nav: blog
+---
+{%- assign meta = site.data.sections | where: "slug", page.section | first -%}
+<div class="page-head">
+  <h1>{{ meta.title }}</h1>
+  <p>{{ meta.blurb }}</p>
+</div>
+
+{% include section-nav.html %}
+
+{{ content }}
+
+{%- assign posts = site.categories[page.section] -%}
+{% include post-list.html posts=posts %}

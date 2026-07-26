@@ -309,3 +309,179 @@ footer {
   font-family: var(--mono);
   border-top: 1px solid var(--border);
 }
+
+/* ==== Blog sections ==================================================== */
+
+/* Section switcher (All / IT Design / Coding / ...) */
+.section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 26px 0 4px;
+}
+.section-nav a {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  text-decoration: none;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 7px 14px;
+  border-radius: 8px;
+  transition: all .18s ease;
+}
+.section-nav a:hover { color: var(--text); border-color: rgba(34, 211, 238, 0.45); }
+.section-nav a.on {
+  color: var(--text);
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.18);
+}
+.section-nav a em { font-style: normal; color: var(--purple); }
+
+/* Section cards on the homepage sit tighter than project cards */
+.section-grid { padding-top: 20px; }
+.section-grid .project h3 a::before { content: "# "; }
+
+h3.sub {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 34px 0 0;
+}
+h3.sub::before { content: "// "; color: var(--purple); }
+
+h2.year {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 34px 0 0;
+}
+h2.year::before { content: none; }
+
+.empty { color: var(--muted); font-family: var(--mono); font-size: 0.9rem; padding: 20px 0; }
+.more { font-family: var(--mono); font-size: 0.86rem; }
+.more a { text-decoration: none; }
+.more a:hover { text-decoration: underline; }
+
+/* Section chip */
+.tag-chip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: .04em;
+  color: var(--cyan);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-top: 10px;
+  text-decoration: none;
+}
+.post-list .tag-chip { font-weight: 400; }
+a.tag-chip.back { margin: 0 0 18px; display: inline-block; }
+a.tag-chip:hover { box-shadow: 0 0 14px rgba(34, 211, 238, 0.25); }
+
+/* ==== Long-form article typography ==================================== */
+article.post h3 {
+  font-family: var(--mono);
+  font-size: 1.02rem;
+  font-weight: 500;
+  margin: 30px 0 10px;
+  color: var(--text);
+}
+article.post h3::before { content: "› "; color: var(--purple); }
+article.post h2 { border-top: 1px solid var(--border); padding-top: 26px; }
+article.post ul, article.post ol { color: #cfcfe0; padding-left: 22px; }
+article.post li { margin: 6px 0; }
+article.post li::marker { color: var(--cyan); }
+article.post strong { color: var(--text); }
+article.post hr { border: 0; border-top: 1px solid var(--border); margin: 34px 0; }
+article.post img { max-width: 100%; height: auto; border-radius: 10px; }
+
+article.post blockquote {
+  margin: 26px 0;
+  padding: 14px 18px;
+  background: var(--surface);
+  border-left: 3px solid var(--purple);
+  border-radius: 0 8px 8px 0;
+  color: #cfcfe0;
+}
+article.post blockquote p { margin: 0; }
+
+/* Inline code vs code blocks: only inline gets the cyan tint */
+article.post p > code,
+article.post li > code,
+article.post td > code {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
+}
+article.post pre code { color: var(--text); background: none; border: 0; padding: 0; }
+
+/* Tables scroll instead of pushing the page sideways */
+.table-scroll { overflow-x: auto; margin: 24px 0; }
+article.post table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+  font-family: var(--mono);
+}
+article.post th, article.post td {
+  border: 1px solid var(--border);
+  padding: 9px 12px;
+  text-align: left;
+}
+article.post th { color: var(--cyan); background: var(--surface); font-weight: 500; }
+article.post td { color: #cfcfe0; }
+
+/* In-page table of contents (the leading ordered list) */
+article.post .toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 26px 0;
+}
+article.post .toc ol { margin: 0; }
+article.post .toc a { text-decoration: none; }
+article.post .toc a:hover { text-decoration: underline; }
+
+.post-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: space-between;
+  margin-top: 48px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 0.86rem;
+}
+.post-foot a { text-decoration: none; }
+.post-foot a:hover { text-decoration: underline; }
+.post-foot .nxt { margin-left: auto; text-align: right; }
+
+/* Mermaid diagrams */
+pre.mermaid { background: none; border: 0; border-left: 0; padding: 0; text-align: center; }
+pre.mermaid svg { max-width: 100%; height: auto; }
+
+/* ==== Syntax highlighting (Rouge), tuned to the site palette ========== */
+.highlight, .highlight pre { background: none; }
+.highlight .c, .highlight .c1, .highlight .cm, .highlight .cd { color: #6b6b85; font-style: italic; }
+.highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt,
+.highlight .kc { color: #a855f7; }
+.highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sd, .highlight .se,
+.highlight .sh, .highlight .si, .highlight .sx, .highlight .sr { color: #34d399; }
+.highlight .nc, .highlight .nn, .highlight .nf, .highlight .nb, .highlight .no { color: #22d3ee; }
+.highlight .na, .highlight .nt { color: #7dd3fc; }
+.highlight .m, .highlight .mi, .highlight .mf, .highlight .mh, .highlight .il { color: #fbbf24; }
+.highlight .nv, .highlight .vi, .highlight .vg { color: #f0abfc; }
+.highlight .o, .highlight .ow, .highlight .p { color: var(--muted); }
+.highlight .gd { color: #f87171; }
+.highlight .gi { color: #34d399; }
+.highlight .err, .highlight .gr { color: #f87171; }
+
+/* Wide tables get their own scroll area on narrow screens */
+article.post table { display: block; overflow-x: auto; white-space: nowrap; }
+article.post th, article.post td { white-space: normal; min-width: 8rem; }

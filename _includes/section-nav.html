@@ -1,0 +1,8 @@
+<div class="section-nav">
+  <a href="{{ '/blog.html' | relative_url }}"{% unless page.section %} class="on"{% endunless %}>All</a>
+  {%- for s in site.data.sections %}
+  {%- assign count = site.categories[s.slug] | size %}
+  <a href="{{ '/' | append: s.slug | append: '/' | relative_url }}"
+     {% if page.section == s.slug %}class="on"{% endif %}>{{ s.title }} <em>{{ count }}</em></a>
+  {%- endfor %}
+</div>
