@@ -54,6 +54,25 @@ types (sequence, gantt, class, ...) still render, just without the toggle.
 If a diagram's labels contain `{{ ... }}`, wrap the block in `{% raw %}` /
 `{% endraw %}` so Liquid doesn't try to evaluate them.
 
+## Writing from a browser or tablet (/admin/)
+
+<https://geekpratyush.github.io/admin/> is a Sveltia CMS dashboard — a headless
+CMS that commits Markdown straight to this repo.
+
+**Signing in:** choose *Sign In Using Access Token* and paste a GitHub
+fine-grained personal access token, scoped to this repository only, with
+**Contents: read and write**. Nothing else to deploy. (The *Sign In with GitHub*
+button needs a self-hosted OAuth worker — see the note in `admin/config.yml`.)
+
+Collections mirror the section folders, plus Drafts. Saving commits to `main`,
+which publishes about a minute later. Sveltia has no editorial/PR workflow yet;
+to stage instead of publish, point `branch` in `admin/config.yml` at another
+branch and merge when ready.
+
+**Caution with the big technical posts.** A CMS round-trips Markdown through its
+editor, which can mangle `{% raw %}` wrappers and deeply indented fenced blocks.
+Use the CMS for new writing; edit posts like the Kubernetes guide in git.
+
 ## Adding a new section
 
 1. Add an entry to `_data/sections.yml` (`slug`, `title`, `icon`, `blurb`).

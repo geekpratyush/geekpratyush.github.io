@@ -1,14 +1,17 @@
 # Sveltia CMS configuration.
 #
-# base_url must point at your own OAuth client: GitHub requires a client secret
-# for the token exchange, which a static site cannot hold. Deploy
-# https://github.com/sveltia/sveltia-cms-auth to Cloudflare Workers (free) and
-# put its URL below. Until then, sign-in will fail.
+# Sign in at /admin/ with "Sign In Using Access Token" and a GitHub fine-grained
+# personal access token scoped to this repo with Contents: read and write. That
+# path needs no extra infrastructure.
+#
+# The "Sign In with GitHub" button instead needs an OAuth client, because GitHub
+# requires a client secret for the token exchange and a static site cannot hold
+# one. To enable it, deploy https://github.com/sveltia/sveltia-cms-auth to
+# Cloudflare Workers and add: base_url: https://your-worker.workers.dev
 backend:
   name: github
   repo: geekpratyush/geekpratyush.github.io
   branch: main
-  base_url: https://REPLACE-WITH-YOUR-WORKER.workers.dev
 
 # Saving commits straight to main, which publishes. Sveltia does not support
 # editorial_workflow (PR-based review) yet. To stage instead of publish, point
