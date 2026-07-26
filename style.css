@@ -775,3 +775,26 @@ article.post > p > strong, article.post > li > strong { font-weight: 600; }
 :root[data-theme="light"] .highlight .nv, :root[data-theme="sepia"] .highlight .nv,
 :root[data-theme="light"] .highlight .vi, :root[data-theme="sepia"] .highlight .vi,
 :root[data-theme="light"] .highlight .vg, :root[data-theme="sepia"] .highlight .vg { color: #9333ea; }
+
+/* ==== Homepage About ================================================== */
+/* Now long-form, so it reads in the same serif as articles. */
+section#about p {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: var(--prose);
+}
+/* The single sentence that pivots from systems to people */
+section#about p.pivot {
+  margin: 26px 0;
+  padding: 4px 0 4px 20px;
+  border-left: 3px solid var(--purple);
+  font-size: 1.22rem;
+  line-height: 1.6;
+  color: var(--text);
+  max-width: 64ch;
+}
+@media (max-width: 760px) {
+  section#about p { font-size: 1.05rem; }
+  section#about p.pivot { font-size: 1.12rem; padding-left: 16px; }
+}
